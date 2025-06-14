@@ -1,0 +1,58 @@
+{
+  "name": "main-server",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "./src/index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --exec node src/index.js",
+    "start": "node src/index.js",
+    "client": "cd client && npm start",
+    "dev-all": "concurrently \"npm run dev\" \"npm run client\"",
+    "install-all": "npm install && cd client && npm install",
+    "playground": "echo \"GraphQL Playground available at http://localhost:4000/graphql\"",
+    "quick-test": "node quick-test.js",
+    "test-gemini": "node test-gemini.js",
+    "test-system": "node test-complete-system.js",
+    "test-sentiment": "node test-sentiment-fix.js"
+  },
+  "author": "Aditya",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/client": "^3.11.8",
+    "@aws-sdk/client-s3": "^3.701.0",
+    "@aws-sdk/s3-request-presigner": "^3.701.0",
+    "@graphql-tools/merge": "^9.0.7",
+    "@graphql-tools/schema": "^10.0.6",
+    "@grpc/grpc-js": "^1.12.0",
+    "@grpc/proto-loader": "^0.7.13",
+    "@supabase/supabase-js": "^2.38.4",
+    "apollo-server-express": "^3.13.0",
+    "cloudinary": "^2.5.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^4.21.0",
+    "graphql": "^16.9.0",
+    "graphql-subscriptions": "^2.0.0",
+    "graphql-type-json": "^0.3.2",
+    "graphql-upload-minimal": "^1.6.1",
+    "graphql-ws": "^5.16.0",
+    "jsonwebtoken": "^9.0.2",
+    "jwks-rsa": "^3.1.0",
+    "mongoose": "^8.6.2",
+    "openai": "^4.20.1",
+    "redis": "^4.7.0",
+    "request-ip": "^3.3.0",
+    "subscriptions-transport-ws": "^0.11.0",
+    "ua-parser-js": "^2.0.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.4"
+  }
+}
