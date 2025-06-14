@@ -47,15 +47,6 @@ npm run dev-all
 └── package.json       # Server dependencies
 ```
 
-## 🔧 Commands
-
-```bash
-npm run dev-all        # Start both server & client
-npm run dev           # Server only
-npm run client        # Client only
-npm run test-gemini   # Test Gemini AI connection
-npm run quick-test    # Test server setup
-```
 
 ## 💡 Notes
 
@@ -106,117 +97,6 @@ const products = await supabase.rpc('search_products', {
 | "cheap phone" | ✅ "Cheap Phone XL" | ✅ "Cheap Phone XL" |
 | | ❌ "Budget Smartphone" | ✅ "Budget Smartphone" |
 | | ❌ "Affordable Mobile" | ✅ "Affordable Mobile" |
-
-### Current Implementation
-
-```javascript
-// In AIService.js - Currently using a fallback
-static async generateEmbedding(text) {
-  // ⚠️ DEMO ONLY: Simple hash-based embedding
-  console.warn('Using fallback embedding - consider implementing Vertex AI embeddings for production');
-  
-  // Creates a basic vector representation
-  const words = text.toLowerCase().split(' ');
-  const embedding = new Array(1536).fill(0);
-  
-  // Simple character-based hashing
-  for (let word of words) {
-    for (let char of word) {
-      embedding[char.charCodeAt(0) % 1536] += 1;
-    }
-  }
-  
-  // Normalize to unit vector
-  const magnitude = Math.sqrt(embedding.reduce((sum, val) => sum + val * val, 0));
-  return embedding.map(val => magnitude > 0 ? val / magnitude : 0);
-}
-```
-
-### Production Upgrades
-
-For real applications, replace the fallback with proper embeddings:
-
-#### Option A: Google Vertex AI (Recommended)
-```javascript
-import { VertexAI } from '@google-cloud/vertexai';
-
-static async generateEmbedding(text) {
-  const vertexAI = new VertexAI({
-    project: 'your-project-id', 
-    location: 'us-central1'
-  });
-  
-  const model = vertexAI.getGenerativeModel({
-    model: 'textembedding-gecko'
-  });
-  
-  const result = await model.embedContent(text);
-  return result.embedding.values;
-}
-```
-
-#### Option B: Hugging Face
-```javascript
-static async generateEmbedding(text) {
-  const response = await fetch(
-    'https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2', 
-    {
-      method: 'POST',
-      headers: { 
-        'Authorization': `Bearer ${process.env.HUGGINGFACE_API_TOKEN}` 
-      },
-      body: JSON.stringify({ inputs: text })
-    }
-  );
-  return await response.json();
-}
-```
-
-#### Option C: Disable Vector Search (Simple)
-```javascript
-// Use basic text search instead
-const { data: products } = await supabase
-  .from('products')
-  .select('*')
-  .textSearch('name,description', message, { type: 'websearch' })
-  .limit(5);
-```
-
-### Database Setup for Vector Search
-
-Your Supabase database needs the `vector` extension:
-
-```sql
--- Enable vector extension
-CREATE EXTENSION IF NOT EXISTS vector;
-
--- Products table with embeddings
-CREATE TABLE products (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  name text NOT NULL,
-  description text,
-  price decimal(10,2),
-  category text,
-  embedding vector(1536),  -- Vector column for embeddings
-  created_at timestamp DEFAULT now()
-);
-
--- Vector similarity search function
-CREATE OR REPLACE FUNCTION search_products(
-  query_embedding vector(1536),
-  match_threshold float,
-  match_count int
-)
-RETURNS setof products
-LANGUAGE sql STABLE
-AS $$
-  SELECT *
-  FROM products
-  WHERE embedding <#> query_embedding < -match_threshold
-  ORDER BY embedding <#> query_embedding
-  LIMIT match_count;
-$$;
-```
 
 ### Benefits of Vector Search
 
