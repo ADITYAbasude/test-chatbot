@@ -12,7 +12,7 @@ cp .env.example .env
 # Add your API keys to .env:
 SUPABASE_URL=your_supabase_url
 SUPABASE_SERVICE_ROLE_KEY=your_service_key
-OPENAI_API_KEY=your_gemini_api_key  # Actually uses Gemini AI
+OPENAI_API_KEY=your_openai_api_key
 ```
 
 ### 2. Install & Run
@@ -20,8 +20,8 @@ OPENAI_API_KEY=your_gemini_api_key  # Actually uses Gemini AI
 # Install dependencies
 npm install && cd client && npm install && cd ..
 
-# Test Gemini AI connection
-npm run test-gemini
+# Test OpenAI connection
+npm run test-openai
 
 # Start both server and client
 npm run dev-all
@@ -33,26 +33,36 @@ npm run dev-all
 
 ## 🧪 Test Features
 
-- ✅ AI chat responses (powered by **Gemini 1.5 Flash**)
-- ✅ Product search 
+- ✅ AI chat responses (powered by **OpenAI ChatGPT**)
+- ✅ Product search with real embeddings
 - ✅ Real-time suggestions
 - ✅ GraphQL integration
 
 ## 📁 Structure
 
 ```
-├── src/                 # GraphQL server (with Gemini AI)
+├── src/                 # GraphQL server (with OpenAI)
 ├── client/             # React frontend  
 ├── .env               # Environment variables
 └── package.json       # Server dependencies
 ```
 
+## 🔧 Commands
+
+```bash
+npm run dev-all        # Start both server & client
+npm run dev           # Server only
+npm run client        # Client only
+npm run test-openai   # Test OpenAI connection
+npm run test-gemini   # Test Gemini connection (legacy)
+npm run quick-test    # Test server setup
+```
 
 ## 💡 Notes
 
 - Testing project - not production ready
-- Uses **Google Gemini AI** instead of OpenAI
-- Uses mock embeddings for product search
+- Uses **OpenAI ChatGPT** for AI responses
+- Uses **OpenAI text-embedding-ada-002** for product search
 - Perfect for prototyping AI chat features
 
 ## 🔍 Vector Search Explained
@@ -107,4 +117,4 @@ const products = await supabase.rpc('search_products', {
 ✅ **Context Aware**: Understands "laptop for gaming" vs "laptop for work"  
 
 ---
-*Simple setup for testing GraphQL + Gemini AI chatbot concepts* 🤖
+*Simple setup for testing GraphQL + OpenAI ChatGPT concepts* 🤖

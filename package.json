@@ -17,8 +17,15 @@
     "playground": "echo \"GraphQL Playground available at http://localhost:4000/graphql\"",
     "quick-test": "node quick-test.js",
     "test-gemini": "node test-gemini.js",
+    "test-azure-openai": "node test-azure-openai.js",
+    "test-azure-embeddings": "node test-azure-embeddings.js",
     "test-system": "node test-complete-system.js",
-    "test-sentiment": "node test-sentiment-fix.js"
+    "test-sentiment": "node test-sentiment-fix.js",
+    "test-search": "node test-search-products.js",
+    "test-vector-search": "node test-search-products.js",
+    "performance-test": "node performance-test-complex.js",
+    "test-performance": "node performance-test-complex.js",
+    "populate": "node populate-products.js"
   },
   "author": "Aditya",
   "license": "ISC",

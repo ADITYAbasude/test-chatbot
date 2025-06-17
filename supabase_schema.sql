@@ -8,7 +8,7 @@ create table products (
   description text,
   price decimal(10,2),
   category text,
-  embedding vector(1536), -- OpenAI ada-002 embedding dimension
+  embedding vector(3072), -- Azure OpenAI text-embedding-3-large dimension
   popularity integer default 0,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
@@ -35,7 +35,7 @@ create table conversations (
 
 -- Function to search products using vector similarity
 create or replace function search_products(
-  query_embedding vector(1536),
+  query_embedding vector(3072),
   match_threshold float,
   match_count int
 )

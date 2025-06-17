@@ -1,18 +1,24 @@
-import { supabase, openai } from '../utils/context.js';
+import { supabase, openai, azureOpenAI } from '../utils/context.js';
 
-export class AIService {// Generate embedding for text - Note: Gemini doesn't support embeddings via OpenAI API
-  // Using a fallback text-based search or you can use Google's Vertex AI for embeddings
+export class AIService {  // Generate embedding for text using Azure OpenAI (embeddings work!)
   static async generateEmbedding(text) {
     try {
-      // For now, we'll create a simple text-based hash as a fallback
-      // In production, you'd want to use Google's Vertex AI embeddings API
-      console.warn('Using fallback embedding - consider implementing Vertex AI embeddings for production');
+      const response = await azureOpenAI.embeddings.create({
+        model: process.env.AZURE_OPENAI_EMBEDDING_DEPLOYMENT || "text-embedding-3-large",
+        input: text,
+      });
       
-      // Simple text-based embedding simulation (for testing)
+      console.log('✅ Using Azure OpenAI embeddings');
+      return response.data[0].embedding;
+      
+    } catch (error) {
+      console.error('Error generating Azure OpenAI embedding:', error);
+      
+      // Fallback to simple embedding if Azure OpenAI fails
+      console.warn('Using fallback embedding due to Azure API error');
       const words = text.toLowerCase().split(' ');
-      const embedding = new Array(1536).fill(0); // OpenAI embedding size
+      const embedding = new Array(1536).fill(0);
       
-      // Create a simple hash-based embedding
       for (let i = 0; i < words.length; i++) {
         const word = words[i];
         for (let j = 0; j < word.length; j++) {
@@ -21,13 +27,8 @@ export class AIService {// Generate embedding for text - Note: Gemini doesn't su
         }
       }
       
-      // Normalize the embedding
       const magnitude = Math.sqrt(embedding.reduce((sum, val) => sum + val * val, 0));
       return embedding.map(val => magnitude > 0 ? val / magnitude : 0);
-      
-    } catch (error) {
-      console.error('Error generating embedding:', error);
-      throw error;
     }
   }
   // Process user message and generate AI response
@@ -67,11 +68,9 @@ export class AIService {// Generate embedding for text - Note: Gemini doesn't su
         userMessage: message,
         products: productsList,
         conversationHistory: conversationHistory || []
-      };
-
-      // Generate AI response using Gemini
+      };      // Generate AI response using regular OpenAI (more reliable for chat)
       const completion = await openai.chat.completions.create({
-        model: "gemini-1.5-flash",
+        model: "gpt-3.5-turbo", // Use regular OpenAI model
         messages: [
           {
             role: "system",
@@ -149,7 +148,7 @@ export class AIService {// Generate embedding for text - Note: Gemini doesn't su
   // Get chat completion stream for real-time responses
   static async getChatCompletionStream(messages) {
     try {      const stream = await openai.chat.completions.create({
-        model: "gemini-1.5-flash",
+        model: "gpt-3.5-turbo",
         messages,
         stream: true,
         max_tokens: 300,
@@ -171,11 +170,9 @@ export class AIService {// Generate embedding for text - Note: Gemini doesn't su
       const conversationHistory = await this.getConversationContext(userId, conversationId);
       
       // Analyze message intent and entities
-      const analysis = await this.analyzeMessage(message);
-
-      // Generate AI response with context using Gemini
+      const analysis = await this.analyzeMessage(message);      // Generate AI response with context using regular OpenAI
       const completion = await openai.chat.completions.create({
-        model: "gemini-1.5-flash",
+        model: "gpt-3.5-turbo",
         messages: [
           {
             role: "system",
@@ -244,7 +241,7 @@ export class AIService {// Generate embedding for text - Note: Gemini doesn't su
   // Analyze message for intent, entities, and sentiment
   static async analyzeMessage(message) {
     try {      const completion = await openai.chat.completions.create({
-        model: "gemini-1.5-flash",
+        model: "gpt-3.5-turbo",
         messages: [
           {
             role: "system",

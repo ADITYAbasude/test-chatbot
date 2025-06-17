@@ -81,10 +81,9 @@ async function startServer() {
     app.get('/health', (req, res) => {
       res.json({ 
         status: 'OK', 
-        timestamp: new Date().toISOString(),
-        services: {
+        timestamp: new Date().toISOString(),        services: {
           supabase: !!process.env.SUPABASE_URL && process.env.SUPABASE_URL !== 'your_supabase_url_here',
-          gemini: !!process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your_openai_api_key_here'
+          azureOpenAI: !!process.env.AZURE_OPENAI_API_KEY && process.env.AZURE_OPENAI_ENDPOINT
         },
         graphql: server.graphqlPath
       });
@@ -102,9 +101,8 @@ async function startServer() {
         features: [          'Apollo Server Express',
           'GraphQL Subscriptions',
           'File Upload Support',
-          'JWT Authentication Ready',
-          'Supabase Integration',
-          'Gemini AI Integration',
+          'JWT Authentication Ready',          'Supabase Integration',
+          'Azure OpenAI Integration',
           'Real-time Chat'
         ]
       });
@@ -154,7 +152,7 @@ async function startServer() {
       console.log(`📖 API Info: http://localhost:${PORT}/`);
       console.log('');      console.log('🔧 Configuration Status:');
       console.log(`   Supabase: ${!!process.env.SUPABASE_URL && process.env.SUPABASE_URL !== 'your_supabase_url_here' ? '✅ Configured' : '❌ Not configured'}`);
-      console.log(`   Gemini AI: ${!!process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your_openai_api_key_here' ? '✅ Configured' : '❌ Not configured'}`);
+      console.log(`   Azure OpenAI: ${!!process.env.AZURE_OPENAI_API_KEY && process.env.AZURE_OPENAI_ENDPOINT ? '✅ Configured' : '❌ Not configured'}`);
       console.log('');
       console.log('🎯 Features Enabled:');
       console.log('   ✅ Apollo Server Express');

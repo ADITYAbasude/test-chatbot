@@ -14,10 +14,9 @@ export const chatResolvers = {
     },    health: async () => {
       return {
         status: 'OK',
-        timestamp: new Date().toISOString(),
-        services: {
+        timestamp: new Date().toISOString(),        services: {
           supabase: !!process.env.SUPABASE_URL && process.env.SUPABASE_URL !== 'your_supabase_url_here',
-          gemini: !!process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your_openai_api_key_here',
+          azureOpenAI: !!process.env.AZURE_OPENAI_API_KEY && process.env.AZURE_OPENAI_ENDPOINT,
           redis: false // TODO: Implement Redis check
         },
         version: '1.0.0'
